@@ -9,5 +9,12 @@ pipeline {
 		    }
 		}
 		
+		stage('Build Deliverable') {
+   			steps {
+       
+         sh 'mvn clean package'
+    		}
+		}
+
     }
 }
