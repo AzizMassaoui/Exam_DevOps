@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        SONAR_TOKEN = credentials('sonarExamDevops') 
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
@@ -17,7 +21,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('Sonarqube') {
-                    sh 'mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}'
+                    sh "mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
         }
