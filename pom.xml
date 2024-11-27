@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>tn.esprit</groupId>
 	<artifactId>ExamThourayaS2</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>ExamThourayaS2</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -46,5 +46,16 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<distributionManagement>
+	    <repository>
+	        <id>nexus-releases</id>
+	        <url>http://localhost:8081/repository/maven-releases/</url>
+	    </repository>
+	    <snapshotRepository>
+	        <id>nexus-snapshots</id>
+	        <url>http://localhost:8081/repository/maven-snapshots/</url>
+	    </snapshotRepository>	    
+	</distributionManagement>
 
 </project>
