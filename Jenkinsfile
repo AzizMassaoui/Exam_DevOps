@@ -25,7 +25,7 @@ pipeline {
         stage('Deploy to Nexus') {
             steps {
     		
-                    sh 'mvn clean deploy -s /settings.xml'
+                    sh 'mvn clean deploy -s ./settings.xml'
 		}
         }
         
