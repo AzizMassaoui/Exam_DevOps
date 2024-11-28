@@ -11,7 +11,7 @@ pipeline {
             steps {
                 sh '''
                 git fetch origin massaoui
-                git checkout massaoui -- Dockerfile
+		git checkout origin/massaoui -- Dockerfile
                 '''
             }
         }
