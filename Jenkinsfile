@@ -22,12 +22,13 @@ pipeline {
             }
         }
         
-        stage('Deploy to Nexus') {
-            steps {
-    		
-                    sh 'echo ls -la ~/.m2/settings.xml'
-		}
-        }
+       stage('Deploy to Nexus') {
+    	steps {
+        withCredentials([file(credentialsId: 'nexusCreds', variable: 'SETTINGS_FILE')]) {
+            sh 'mvn deploy -s $SETTINGS_FILE'
+        		}		
+    	       }	
+	}
         
     }
 }
