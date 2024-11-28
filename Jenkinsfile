@@ -54,7 +54,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerCreds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh '''
-                        docker login -u $DOCKER_USERNAME --password-stdin
+                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
                         docker push $DOCKER_USERNAME/exam_devops:latest
                     '''
                 }
