@@ -21,35 +21,32 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deploy to Nexus') {
             steps {
-                withCredentials([file(credentialsId: 'nexusCreds', variable: 'SETTINGS_FILE')]) {
-                    sh 'mvn deploy -s $SETTINGS_FILE'
-                }		
-            }	
-        }
-        
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    def jarFile = sh(script: "ls target/*.jar | grep -v original", returnStdout: true).trim()
-                    echo "Using JAR file: ${jarFile}"
-                    withCredentials([usernamePassword(credentialsId: 'dockerCreds', usernameVariable: 'DOCKER_USER')]) {
-                        sh """
-                        docker build -t $DOCKER_USER/exam-devops:latest --build-arg JAR_FILE=${jarFile} .
-                        """
-                    }
+                withCredentials([usernamePassword(credentialsId: 'nexusCred', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
+                    sh 'mvn clean deploy -Dusername=$NEXUS_USERNAME -Dpassword=$NEXUS_PASSWORD'
                 }
             }
         }
-        
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def jarFile = sh(returnStdout: true, script: "ls target/*.jar | grep -v original").trim()
+                    echo "Using JAR file: ${jarFile}"
+                    sh "docker build -t exam_devops:latest --build-arg JAR_FILE=${jarFile} ."
+                }
+            }
+        }
+
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerCreds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerCreds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh """
-                    docker login -u $DOCKER_USER -p $DOCKER_PASS
-                    docker push $DOCKER_USER/exam-devops:latest
+                    docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+                    docker tag exam_devops:latest ${DOCKER_USER}/exam_devops:latest
+                    docker push ${DOCKER_USER}/exam_devops:latest
                     """
                 }
             }
