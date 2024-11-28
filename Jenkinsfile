@@ -22,13 +22,13 @@ pipeline {
             }
         }
 
-        stage('Deploy to Nexus') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'nexusCred', passwordVariable: 'NEXUS_PASSWORD', usernameVariable: 'NEXUS_USERNAME')]) {
-                    sh 'mvn clean deploy -Dusername=$NEXUS_USERNAME -Dpassword=$NEXUS_PASSWORD'
-                }
-            }
-        }
+              stage('Deploy to Nexus') {
+    	steps {
+        withCredentials([file(credentialsId: 'nexusCreds', variable: 'SETTINGS_FILE')]) {
+            sh 'mvn deploy -s $SETTINGS_FILE'
+        		}		
+    	       }	
+	}
 
         stage('Build Docker Image') {
             steps {
