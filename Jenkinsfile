@@ -7,11 +7,12 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/AzizMassaoui/Exam_DevOps.git'
             }
         }
+
         stage('Fetch Dockerfile from Working Branch') {
             steps {
                 sh '''
                 git fetch origin massaoui
-		git checkout origin/massaoui -- Dockerfile
+                git checkout origin/massaoui -- Dockerfile
                 '''
             }
         }
@@ -30,37 +31,34 @@ pipeline {
             }
         }
 
-              stage('Deploy to Nexus') {
-    	steps {
-        withCredentials([file(credentialsId: 'nexusCreds', variable: 'SETTINGS_FILE')]) {
-            sh 'mvn deploy -s $SETTINGS_FILE'
-        		}		
-    	       }	
-	}
+        stage('Deploy to Nexus') {
+            steps {
+                withCredentials([file(credentialsId: 'nexusCreds', variable: 'SETTINGS_FILE')]) {
+                    sh 'mvn deploy -s $SETTINGS_FILE'
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
                 script {
                     def jarFile = sh(returnStdout: true, script: "ls target/*.jar | grep -v original").trim()
                     echo "Using JAR file: ${jarFile}"
-                    sh "docker build -t exam_devops:latest --build-arg JAR_FILE=${jarFile} ."
+                    // Build and tag with your Docker Hub username
+                    sh "docker build -t azizmassaoui/exam_devops:latest --build-arg JAR_FILE=${jarFile} ."
                 }
             }
         }
 
-
-
-   stage('Push Docker Image') {
-    steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerCreds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            sh '''
-                echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                docker push $DOCKER_USERNAME/exam_devops:latest
-            '''
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerCreds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh '''
+                        docker login -u $DOCKER_USERNAME --password-stdin
+                        docker push $DOCKER_USERNAME/exam_devops:latest
+                    '''
+                }
+            }
         }
     }
 }
-
-    }
-}
-
