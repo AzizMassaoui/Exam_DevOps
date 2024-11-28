@@ -48,17 +48,15 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerCreds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh """
-                    docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-                    docker tag exam_devops:latest ${DOCKER_USER}/exam_devops:latest
-                    docker push ${DOCKER_USER}/exam_devops:latest
-                    """
-                }
-            }
-        }
+       stage('Push Docker Image') {
+    withCredentials([usernamePassword(credentialsId: 'docker-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+        sh '''
+            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+            docker push $DOCKER_USERNAME/my-image:latest
+        '''
+    }
+}
+
     }
 }
 
