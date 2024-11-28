@@ -7,6 +7,14 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/AzizMassaoui/Exam_DevOps.git'
             }
         }
+        stage('Fetch Dockerfile from Working Branch') {
+            steps {
+                sh '''
+                git fetch origin massaoui
+                git checkout massaoui -- Dockerfile
+                '''
+            }
+        }
 
         stage('Build Deliverable') {
             steps {
