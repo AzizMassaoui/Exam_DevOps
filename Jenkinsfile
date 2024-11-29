@@ -60,8 +60,9 @@ pipeline {
                 }
             }
         }
-        
-        post {
+    }
+
+    post {
         failure {
             script {
                 emailext(
@@ -107,8 +108,6 @@ pipeline {
                 )
             }
         }
-        
-        
-    		}
-	}
+    }
 }
+
